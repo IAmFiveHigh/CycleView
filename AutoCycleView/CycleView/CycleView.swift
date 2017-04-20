@@ -13,6 +13,8 @@ class CycleView: UIView {
     
     fileprivate var imageArray: [String]?
     
+    fileprivate let page = UIPageControl()
+    
     fileprivate var timer: Timer?
     
     fileprivate var index: Int = 1
@@ -82,6 +84,18 @@ class CycleView: UIView {
         
     }
     
+    //MARK: - 创建pageControl
+    fileprivate func createPageControl() {
+        
+        page.frame = CGRect(x: 0, y: 0, width: 100, height: 20)
+        page.setCenterX(centerX())
+        page.setCenterY(height() - 10)
+        page.numberOfPages = (imageArray?.count)! - 2
+        
+        addSubview(page)
+    }
+
+    
 }
 
 extension CycleView {
@@ -98,6 +112,8 @@ extension CycleView {
         
         creatScrollView()
         
+        createPageControl()
+        
         createTimer()
     }
 }
@@ -108,19 +124,24 @@ extension CycleView: UIScrollViewDelegate {
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
         //拖拽停止后的方法
-        if scrollView.contentOffset.x == CGFloat((self.imageArray?.count)! - 1) * width(){
-            scrollView.setContentOffset(CGPoint(x: width(), y: 0), animated: false)
-        }else if scrollView.contentOffset.x == 0 {
-            scrollView.setContentOffset(CGPoint(x: width() * CGFloat((self.imageArray?.count)! - 2), y: 0), animated: false)
-        }
-        
+        scrollViewEndAnimation(scrollView: scrollView)
         //拖拽后重制index
         index = Int(scrollView.contentOffset.x / width())
+        
+        page.currentPage = index - 1
     }
     
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         
-        //自动移动停止后的方法
+        scrollViewEndAnimation(scrollView: scrollView)
+        
+        index = Int(scrollView.contentOffset.x / width())
+        
+        page.currentPage = index - 1
+    }
+    
+    fileprivate func scrollViewEndAnimation(scrollView: UIScrollView) {
+        
         if scrollView.contentOffset.x == CGFloat((self.imageArray?.count)! - 1) * width(){
             scrollView.setContentOffset(CGPoint(x: width(), y: 0), animated: false)
         }else if scrollView.contentOffset.x == 0 {
@@ -128,7 +149,9 @@ extension CycleView: UIScrollViewDelegate {
         }
         
     }
+    
 }
+
 
 extension UIView {
     //MARK: -UIView 的扩展
