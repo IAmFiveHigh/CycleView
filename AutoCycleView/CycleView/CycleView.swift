@@ -7,7 +7,10 @@
 //
 
 import UIKit
-
+protocol CycleViewDelegate: class {
+    
+    func imageViewBeClickWithTag(_ tag: Int)
+}
 
 class CycleView: UIView {
     
@@ -20,7 +23,7 @@ class CycleView: UIView {
     fileprivate var index: Int = 1
     
     fileprivate lazy var scrollView: UIScrollView = {
-       
+        
         let scrollView = UIScrollView(frame: CGRect.zero)
         scrollView.delegate = self
         scrollView.isPagingEnabled = true
@@ -29,6 +32,8 @@ class CycleView: UIView {
         scrollView.scrollsToTop = false
         return scrollView
     }()
+    
+    weak var delegate: CycleViewDelegate?
     
     //MARK: 操作数组
     fileprivate func operateArray() {
@@ -54,12 +59,36 @@ class CycleView: UIView {
             imageView.setX(CGFloat(index) * width())
             imageView.image = UIImage(named: imageName)
             scrollView.addSubview(imageView)
+            
+            let button = UIButton(frame: bounds)
+            button.setX(CGFloat(index) * width())
+            button.tag = index
+            button.addTarget(self, action: #selector(buttonClick(sender:)), for: .touchUpInside)
+            scrollView.addSubview(button)
         }
+        
+        
         
         //3 设定scrollView起始offset
         scrollView.contentOffset = CGPoint(x: width(), y: 0)
         
         addSubview(scrollView)
+    }
+    
+    @objc fileprivate func buttonClick(sender: UIButton) {
+        
+        var tagIndex = sender.tag
+        
+        if sender.tag == 0 {
+            tagIndex = (imageArray?.count)! - 2
+        }else if sender.tag == (imageArray?.count)! - 1 {
+            tagIndex = 0
+        }
+        
+        
+        if let delegate = delegate {
+            delegate.imageViewBeClickWithTag(tagIndex)
+        }
     }
     
     //MARK: 创建timer
@@ -94,7 +123,7 @@ class CycleView: UIView {
         
         addSubview(page)
     }
-
+    
     
 }
 

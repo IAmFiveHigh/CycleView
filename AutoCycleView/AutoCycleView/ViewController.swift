@@ -12,19 +12,28 @@ let ScreenWidth = UIScreen.main.bounds.width
 let ScreenHeight = UIScreen.main.bounds.height
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         let cycleView = CycleView(frame: CGRect(x: 0, y: 20, width: ScreenWidth, height: ScreenHeight / 5))
         let array = ["test_banner01.jpg","test_banner02.jpg","test_banner03.jpg"]
         cycleView.setImageArray(array)
+        cycleView.delegate = self
         
         view.addSubview(cycleView)
     }
+    
+    
+    
+    
+}
 
-
-
-
+extension ViewController: CycleViewDelegate {
+    
+    func imageViewBeClickWithTag(_ tag: Int) {
+        
+        print(tag)
+    }
 }
 
