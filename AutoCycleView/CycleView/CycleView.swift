@@ -83,6 +83,8 @@ class CycleView: UIView {
             tagIndex = (imageArray?.count)! - 2
         }else if sender.tag == (imageArray?.count)! - 1 {
             tagIndex = 0
+        }else {
+            tagIndex -= 1
         }
         
         
